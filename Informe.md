@@ -1,40 +1,102 @@
-Tarea 0
-Daniel Abrego -- Fernando Rojas
-INFORME DE INSTALACION XV6
+# INFORME DE INSTALACIÓN – XV6  
+**Tarea 0**  
+**Integrantes:** Daniel Abrego – Fernando Rojas  
 
-Obtuve un error al intentar correr el make qemu por no tener instalado el gcc, ademas de no haber instalado correctamente wsl, cosa que pensaba q ya habia hecho
+---
 
-Pasos seguidos: 
-1- Lo primero que hicimos fue hacer un fork al repositorio entregado en clases, para luego clonarlo localmente , en nuestro caso usando Visual Studio Code.
+## Introducción  
+El objetivo de esta tarea fue instalar el sistema operativo educativo **xv6** en nuestra máquina local, ejecutarlo en QEMU y documentar el proceso, incluyendo los pasos realizados, los problemas encontrados y sus soluciones.  
 
-git init
-git clone https://github.com/Fdor02/xv6-riscv
+---
 
-2- Una vez en hecho esto lo siguiente que hicimos fue seleccionar el directorio de este repositorio y crear una nueva rama desde la cual trabajar a la que llamamos grupo7_t0
-cd
-git checkout -b grupo7_t0
+## Pasos realizados  
 
-3- Luego instalamos wsl
-wsl --install
+1. **Fork y clonación del repositorio**  
+   - Realizamos un fork del repositorio oficial entregado en clases.  
+   - Posteriormente, lo clonamos de manera local utilizando **Visual Studio Code** y Git:  
+     ```bash
+     git init
+     git clone https://github.com/Fdor02/xv6-riscv
+     ```
 
-4- Abrimos wsl y ubuntu
-wsl
-sudo apt update
+2. **Creación de una nueva rama**  
+   - Seleccionamos el directorio del repositorio clonado y creamos una rama para trabajar:  
+     ```bash
+     cd xv6-riscv
+     git checkout -b grupo7_t0
+     ```
 
-5- Instalamos nuestro toolchain con los nombres default recomendados
-sudo apt install build-essential qemu-system-x86 gdb -y
+3. **Instalación de WSL**  
+   - Como parte del entorno, instalamos **Windows Subsystem for Linux (WSL)**:  
+     ```bash
+     wsl --install
+     ```
 
-Esto lo hicimos dos veces por errores obtenidos ya que no abrimos correctamente nuestro terminal con wsl la primera vez
-sudo apt riscv64-unknown-elf-gcc 
-sudo apt qemu-system-riscv64 
+4. **Configuración inicial de Ubuntu en WSL**  
+   - Ingresamos a WSL y actualizamos los paquetes:  
+     ```bash
+     wsl
+     sudo apt update
+     ```
 
-6- Verificamos las instalaciones con el comando --version
+5. **Instalación de dependencias y toolchain**  
+   - Instalamos los paquetes básicos y las herramientas necesarias:  
+     ```bash
+     sudo apt install build-essential qemu-system-x86 gdb -y
+     ```
+   - Debido a errores iniciales (por no abrir correctamente el terminal de WSL), repetimos la instalación.  
+   - Instalamos los paquetes específicos de RISC-V:  
+     ```bash
+     sudo apt install riscv64-unknown-elf-gcc 
+     sudo apt install qemu-system-riscv64 
+     ```
 
-7- Compilamos con make qemu y luego usamos los comandos solicitados por la tarea para demostrar su funcionalidad (se adjunta pantallazo)
+6. **Verificación de instalaciones**  
+   - Confirmamos las instalaciones con la opción `--version`:  
+     ```bash
+     riscv64-unknown-elf-gcc --version
+     qemu-system-riscv64 --version
+     ```
 
-Aqui cabe mencionar que obtuvimos un error en la instalacion obteniendo el siguiente output cuando usabamos el comando make qemu:
-gcc -I. -o mkfs/mkfs mkfs/mkfs.c
-make: gcc: No such file or directory
-make: *** [Makefile:117: mkfs/mkfs] Error 127
+7. **Compilación y prueba de xv6**  
+   - Ejecutamos el comando:  
+     ```bash
+     make qemu
+     ```
+   - Dentro de xv6 probamos los comandos solicitados en la tarea:  
+     ```
+     $ ls
+     $ echo "Hola xv6"
+     $ cat README
+     ```
+   - Adjuntamos la captura de pantalla como evidencia (pantallazo con los comandos anteriores ejecutados).  
 
-Para esto encontramos en internet que con build-essential podiamos descargar correctamente todo lo necesario y hacerlo funcionar.
+---
+
+## Problemas encontrados  
+
+- **Error al compilar con `make qemu`:**  
+    gcc -I. -o mkfs/mkfs mkfs/mkfs.c
+    make: gcc: No such file or directory
+    make: *** [Makefile:117: mkfs/mkfs] Error 127
+
+    Este error se debía a que **gcc no estaba instalado correctamente**.  
+
+    - **Causa adicional:** instalación incompleta de WSL la primera vez, lo que generó fallos en la configuración inicial.  
+
+---
+
+## Solución aplicada  
+
+- Investigamos en línea y encontramos que instalando el paquete **build-essential** se resolvía el problema, ya que incluye `gcc` y otros compiladores necesarios.  
+- Reinstalamos correctamente WSL, abrimos el terminal de Ubuntu desde WSL y ejecutamos nuevamente las instalaciones.  
+- Con esto logramos compilar y ejecutar xv6 correctamente.  
+
+    ---
+
+## Conclusión  
+
+La instalación de xv6 requirió resolver errores relacionados con dependencias ausentes y la configuración de WSL. Finalmente, logramos ejecutar `make qemu` con éxito y verificar el funcionamiento del sistema operativo mediante los comandos requeridos.  
+
+Se adjunta captura de pantalla como evidencia de la ejecución de xv6 en QEMU.  
+*Adjunta en el correo enviado al profesor*
