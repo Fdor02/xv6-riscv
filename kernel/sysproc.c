@@ -98,3 +98,31 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+// kernel/sysproc.c
+uint64
+sys_getppid(void)
+{
+  struct proc *p = myproc();
+  if(p->parent)
+    return p->parent->pid;
+  return -1;
+}
+
+uint64
+sys_getancestor(void)
+{
+  int k;
+  argint(0, &k);   // obtiene el argumento k, no retorna nada
+
+  struct proc *p = myproc();
+  if(k == 0) return p->pid;
+
+  while(k > 0 && p){
+    p = p->parent;
+    k--;
+  }
+  if(p) return p->pid;
+  return -1;
+}
+
