@@ -36,6 +36,6 @@ entry("getpid");
 entry("sbrk");
 entry("sleep");
 entry("uptime");
-entry("getppid");
-entry("getancestor");
+entry("getppid"); # genera stub userland para getppid()
+entry("getancestor"); # genera stub userland para getancestor(int)
 

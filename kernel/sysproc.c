@@ -100,15 +100,19 @@ sys_uptime(void)
 }
 
 // kernel/sysproc.c
+// getppid(): retornar el pid del proceso padre del proceso que llama.
+// Si no hay padre, retornar -1 para señalizarlo.
 uint64
 sys_getppid(void)
 {
-  struct proc *p = myproc();
+  struct proc *p = myproc(); // myproc() devuelve el proceso en CPU actual.
   if(p->parent)
     return p->parent->pid;
   return -1;
 }
 
+// getancestor(k): 0 -> yo, 1 -> padre, 2 -> abuelo, etc.
+// Si el ancestro no existe (se llega a NULL antes de agotar k), retorna -1.
 uint64
 sys_getancestor(void)
 {

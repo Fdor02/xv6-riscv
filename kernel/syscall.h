@@ -1,4 +1,6 @@
 // System call numbers
+// Elegimos los siguientes números libres del enum/serie de SYS_.
+// OJO: estos valores deben ser únicos y estar sincronizados con syscall.c.
 #define SYS_fork    1
 #define SYS_exit    2
 #define SYS_wait    3

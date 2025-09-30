@@ -101,6 +101,7 @@ extern uint64 sys_unlink(void);
 extern uint64 sys_link(void);
 extern uint64 sys_mkdir(void);
 extern uint64 sys_close(void);
+// Declaramos los nuevos handlers para que el compilador conozca sus firmas.
 extern uint64 sys_getppid(void);
 extern uint64 sys_getancestor(void);
 
@@ -129,8 +130,8 @@ static uint64 (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
-[SYS_getppid]   sys_getppid,
-[SYS_getancestor]   sys_getancestor,
+[SYS_getppid]   sys_getppid, // mapea número SYS_getppid a su implementación
+[SYS_getancestor]   sys_getancestor, // mapea número SYS_getancestor a su implementación
 };
 
 void

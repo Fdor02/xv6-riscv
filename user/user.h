@@ -44,6 +44,6 @@ void printf(const char*, ...) __attribute__ ((format (printf, 1, 2)));
 void* malloc(uint);
 void free(void*);
 
-int getppid(void);
+int getppid(void); // wrapper de espacio de usuario -> trampa a kernel
 
-int getancestor(int k);
+int getancestor(int k); // idem, recibe k (0=yo, 1=padre, 2=abuelo, ...)
