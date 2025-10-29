@@ -104,4 +104,9 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+
+  // kernel/proc.h (dentro de struct proc)
+  int tickets;      // cantidad de tickets para lottery (>=1)
+  int cpu_slices;   // veces que este proceso fue elegido por el scheduler
+
 };

@@ -126,3 +126,22 @@ sys_getancestor(void)
   return -1;
 }
 
+uint64
+sys_settickets(void)
+{
+  int n;
+  argint(0, &n); //Arreglo segun el codigo de de la funcion de arriba, que tuvimos el mismo error
+if (n < 0) return -1;
+
+  if (n < 1)
+    n = 1;
+
+  struct proc *p = myproc();
+
+  // Asegurar escritura segura del campo del proceso actual
+  acquire(&p->lock);
+  p->tickets = n;
+  release(&p->lock);
+
+  return 0;
+}

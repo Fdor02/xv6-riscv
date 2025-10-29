@@ -58,6 +58,17 @@ procinit(void)
   }
 }
 
+
+// Agregamos esto para la función krand() atento a si genera error por posicionamiento
+static uint64 rng_state = 88172645463393265ULL;  // semilla cualquiera
+
+static uint
+krand(void) {
+  // LCG simple (no criptográfico). Suficiente para lottery.
+  rng_state = rng_state * 2862933555777941757ULL + 3037000493ULL;
+  return (uint)(rng_state >> 32);
+}
+
 // Must be called with interrupts disabled,
 // to prevent race with process being moved
 // to a different CPU.
@@ -145,6 +156,11 @@ found:
   memset(&p->context, 0, sizeof(p->context));
   p->context.ra = (uint64)forkret;
   p->context.sp = p->kstack + PGSIZE;
+
+  // kernel/proc.c (dentro de allocproc(), cuando p está listo para setear defaults)
+  p->tickets = 100;     // default
+  p->cpu_slices = 0;    // contador en cero
+
 
   return p;
 }
@@ -415,43 +431,62 @@ wait(uint64 addr)
 //  - swtch to start running that process.
 //  - eventually that process transfers control
 //    via swtch back to the scheduler.
+//Aca implementamos el scheduler por lotaria de tickets, atento que esto puede generar problemas
 void
 scheduler(void)
 {
-  struct proc *p;
   struct cpu *c = mycpu();
-
   c->proc = 0;
+
   for(;;){
-    // The most recent process to run may have had interrupts
-    // turned off; enable them to avoid a deadlock if all
-    // processes are waiting. Then turn them back off
-    // to avoid a possible race between an interrupt
-    // and wfi.
     intr_on();
-    intr_off();
 
-    int found = 0;
-    for(p = proc; p < &proc[NPROC]; p++) {
+    int total = 0;
+
+    // 1) Sumar tickets de procesos RUNNABLE
+    for(struct proc *p = proc; p < &proc[NPROC]; p++){
       acquire(&p->lock);
-      if(p->state == RUNNABLE) {
-        // Switch to chosen process.  It is the process's job
-        // to release its lock and then reacquire it
-        // before jumping back to us.
-        p->state = RUNNING;
-        c->proc = p;
-        swtch(&c->context, &p->context);
-
-        // Process is done running for now.
-        // It should have changed its p->state before coming back.
-        c->proc = 0;
-        found = 1;
+      if(p->state == RUNNABLE){
+        if(p->tickets < 1) p->tickets = 1; // robustez: mínimo 1
+        total += p->tickets;
       }
       release(&p->lock);
     }
-    if(found == 0) {
-      // nothing to run; stop running on this core until an interrupt.
-      asm volatile("wfi");
+
+    if(total == 0){
+      // No hay procesos RUNNABLE; continuar el ciclo
+      continue;
+    }
+
+    // 2) Número aleatorio en [1, total]
+    int r = (krand() % total) + 1;
+
+    // 3) Seleccionar por acumulación
+    int acc = 0;
+    struct proc *chosen = 0;
+
+    for(struct proc *p = proc; p < &proc[NPROC]; p++){
+      acquire(&p->lock);
+      if(p->state == RUNNABLE){
+        acc += p->tickets;
+        if(acc >= r && chosen == 0){
+          chosen = p;
+        }
+      }
+      release(&p->lock);
+      if(chosen) break;
+    }
+
+    if(chosen){
+      acquire(&chosen->lock);
+      if(chosen->state == RUNNABLE){
+        chosen->state = RUNNING;
+        chosen->cpu_slices++;   // contabilidad: fue elegido
+        c->proc = chosen;
+        swtch(&c->context, &chosen->context);
+        c->proc = 0;
+      }
+      release(&chosen->lock);
     }
   }
 }

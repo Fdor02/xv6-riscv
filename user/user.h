@@ -47,3 +47,6 @@ void free(void*);
 int getppid(void);
 
 int getancestor(int k);
+
+int settickets(int n);
+

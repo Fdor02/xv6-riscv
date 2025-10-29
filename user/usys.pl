@@ -38,4 +38,5 @@ entry("sleep");
 entry("uptime");
 entry("getppid");
 entry("getancestor");
+entry("settickets");
 
