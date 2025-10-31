@@ -57,6 +57,5 @@ Además, implementar la syscall `settickets(int)` para modificar los tickets del
   - **Sincronización y validaciones:** se agregaron condiciones para evitar que `tickets` fuera menor que 1 y para continuar el ciclo cuando no hay procesos RUNNABLE.
   - **Generación aleatoria:** se implementó un generador LCG (`krand()`) para simular un número aleatorio sin librerías externas.
   - **Medición del comportamiento:** se usó `cpu_slices` y la salida del programa `demo` para validar el reparto proporcional de CPU.
-  - **Exit:** Se rompió el comando para salir (`exit()`), el cuál no sabemos como ocurrió pero se reestableció posteriormente
-
+    
 
