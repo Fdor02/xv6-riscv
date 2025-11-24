@@ -485,3 +485,57 @@ ismapped(pagetable_t pagetable, uint64 va)
   }
   return 0;
 }
+
+//Tarea 3
+// mrdprotect: elimina el permiso de lectura de un rango de páginas.
+int
+mrdprotect(void *addr, int len)
+{
+  // Validaciones básicas
+  if(((uint64)addr % PGSIZE) != 0 || len <= 0)
+    return -1;
+
+  struct proc *p = myproc();
+  pagetable_t pt = p->pagetable;
+
+  for(int i = 0; i < len; i++){
+    uint64 va = (uint64)addr + i * PGSIZE;
+    pte_t *pte = walk(pt, va, 0);
+
+    if(pte == 0) return -1;
+    if(!(*pte & PTE_V)) return -1;
+    if(!(*pte & PTE_U)) return -1;  // sólo páginas de usuario
+
+    // Limpia el bit de lectura, conserva el resto
+    *pte &= ~PTE_R;
+  }
+
+  sfence_vma(); // actualizar TLB
+  return 0;
+}
+
+// munrdprotect: restaura el permiso de lectura del rango de páginas.
+int
+munrdprotect(void *addr, int len)
+{
+  if(((uint64)addr % PGSIZE) != 0 || len <= 0)
+    return -1;
+
+  struct proc *p = myproc();
+  pagetable_t pt = p->pagetable;
+
+  for(int i = 0; i < len; i++){
+    uint64 va = (uint64)addr + i * PGSIZE;
+    pte_t *pte = walk(pt, va, 0);
+
+    if(pte == 0) return -1;
+    if(!(*pte & PTE_V)) return -1;
+    if(!(*pte & PTE_U)) return -1;
+
+    // Restaura el bit de lectura
+    *pte |= PTE_R;
+  }
+
+  sfence_vma();
+  return 0;
+}

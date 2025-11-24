@@ -23,4 +23,6 @@
 #define SYS_getppid  22 // Para obtener el padre del proceso (anterior a getpid, definido mas arriba)
 #define SYS_getancestor  23 // Para obtener el k-ésimo ancestro del proceso
 #define SYS_settickets   24  // EJEMPLO: usa el siguiente número libre en tu árbol
+#define SYS_mrdprotect   25  //Tarea 3
+#define SYS_munrdprotect 26 //Tarea 3
 

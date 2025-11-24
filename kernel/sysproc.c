@@ -145,3 +145,33 @@ if (n < 0) return -1;
 
   return 0;
 }
+
+//Tarea 3
+uint64
+sys_mrdprotect(void)
+{
+    uint64 addr;
+    int len;
+    argaddr(0, &addr); //Mismo arreglo que en la funcion de arriba (t2)
+    argint(1, &len);
+  if (addr < 0 || len < 0)
+        return -1;
+
+   // if (argaddr(0, &addr) < 0 || argint(1, &len) < 0)
+     //   return -1;
+
+    return mrdprotect((void*)addr, len);
+}
+
+uint64
+sys_munrdprotect(void)
+{
+    uint64 addr;
+    int len;
+    argaddr(0, &addr); //Mismo arreglo que en la funcion de arriba (t2)
+    argint(1, &len);
+  if (addr < 0 || len < 0)
+        return -1;
+
+    return munrdprotect((void*)addr, len);
+}

@@ -50,3 +50,5 @@ int getancestor(int k);
 
 int settickets(int n);
 
+int mrdprotect(void *addr, int len); //Tarea 3
+int munrdprotect(void *addr, int len); //Tarea 3

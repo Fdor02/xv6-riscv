@@ -104,6 +104,10 @@ extern uint64 sys_close(void);
 extern uint64 sys_getppid(void);
 extern uint64 sys_getancestor(void);
 extern uint64 sys_settickets(void);
+extern uint64 sys_mrdprotect(void); //Tarea 3
+extern uint64 sys_munrdprotect(void); //Tarea 3
+
+
 
 
 
@@ -134,6 +138,8 @@ static uint64 (*syscalls[])(void) = {
 [SYS_getppid]   sys_getppid,
 [SYS_getancestor]   sys_getancestor,
 [SYS_settickets] sys_settickets,
+[SYS_mrdprotect]   sys_mrdprotect, //Tarea 3
+[SYS_munrdprotect] sys_munrdprotect, //Tarea 3
 
 };
 
