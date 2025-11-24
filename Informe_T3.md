@@ -42,10 +42,20 @@ Se desarrollaron las funciones `mrdprotect()` y `munrdprotect()` que modifican e
 
     - Tras ejecutar munrdprotect(), la lectura vuelve a estar habilitada normalmente.
 
+4. **Resultado real:**
+    - Al correr el programa de prueba rdprotect_test se obtiene el siguiente output:
+    ```bash
+    Protegiendo memoria...
+    Escribiendo aún permitida...
+    usertrap(): unexpected scause 0xf pid=3
+                sepc=0x48 stval=0x4000
+  
+    - Este output nos indica un correcto funcionamiento de la funcion mrdprotect, ya que se deshabilito la lectura a la fuerza, lo que genera un error al intentar leerlo, y no se imprimen los prints posteriores del test.
+
 ## Dificultades
 - **Comprensión del manejo de permisos:** fue necesario revisar cómo xv6 administra los bits de permisos (R/W/X/U/V) dentro de la tabla de páginas.
 - **Uso correcto de `walk()`:** se requirió obtener el PTE exacto de cada página sin alterar las demás.
 - **Actualización del TLB:** al inicio los cambios no surtían efecto hasta aplicar `sfence_vma()`.
 - **Validaciones de seguridad:** asegurar que las direcciones fueran de usuario y estuvieran alineadas a páginas fue clave para evitar modificar memoria del kernel.
 
-/// agregar lo de argint() 
+- Nuevamente tuvimos la confusión al definir argint(0, &k); esto fue debido a que al momento de definir la funcion definimos de forma incorrecta el puntero de esta funcion.

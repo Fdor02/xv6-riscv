@@ -157,9 +157,6 @@ sys_mrdprotect(void)
   if (addr < 0 || len < 0)
         return -1;
 
-   // if (argaddr(0, &addr) < 0 || argint(1, &len) < 0)
-     //   return -1;
-
     return mrdprotect((void*)addr, len);
 }
 
